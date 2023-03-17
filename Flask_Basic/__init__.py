@@ -2,6 +2,9 @@ from flask import Flask
 
 # __init__.py를 통해 디렉토리 지정
 
+# 테스트 용도
+db = 'database'
+
 
 def create_app():
     print('run create_app()')
@@ -11,4 +14,5 @@ def create_app():
     def index():
         return 'hello world!!!'
 
-    return app.run(debug=True)
+    # return app.run(debug=True)
+    return app
