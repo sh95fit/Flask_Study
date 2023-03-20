@@ -8,6 +8,11 @@ def create_app():
     print('run create_app()')
     app = Flask(__name__)
 
+    # 정적파일 캐시 지우기
+    if app.config['DEBUG']:
+        # 즉, max-age를 1로 변경하여 바로바로 변경되는 것을 확인할 수 있게 해줌
+        app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 1
+
     @app.route('/')
     def index():
         # app.logger.info('RUN Flask Server')
