@@ -1,5 +1,8 @@
 from flask import Flask
 from flask import render_template
+from flask_wtf.csrf import CSRFProtect
+
+csrf = CSRFProtect()
 
 # __init__.py를 통해 디렉토리 지정
 
@@ -8,15 +11,37 @@ def create_app():
     print('run create_app()')
     app = Flask(__name__)
 
+    # csrf 토큰을 정상적으로 생성됨
+    app.config['SECRET_KEY'] = 'secretkey'
+
     # 정적파일 캐시 지우기
     if app.config['DEBUG']:
         # 즉, max-age를 1로 변경하여 바로바로 변경되는 것을 확인할 수 있게 해줌
         app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 1
 
+    ''' CSRF INIT '''
+    csrf.init_app(app)
+
     @app.route('/')
     def index():
         # app.logger.info('RUN Flask Server')
         return render_template('index.html')
+
+    from Flask_Basic.forms.auth_form import LoginForm, RegisterForm
+
+    @app.route('/auth/login')
+    def login():
+        form = LoginForm()
+        return render_template('login.html', form=form)
+
+    @app.route('/auth/register')
+    def register():
+        form = RegisterForm()
+        return render_template('register.html', form=form)
+
+    @app.route('/auth/logout')
+    def logout():
+        return 'logout'
 
     @app.errorhandler(404)
     def page_404(error):
