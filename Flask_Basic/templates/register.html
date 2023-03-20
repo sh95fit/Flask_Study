@@ -1,1 +1,16 @@
-{{ form.csrf_token }}
+<!-- {{ form.csrf_token }} -->
+
+<form method="POST" action="{{ url_for('register') }}">
+  {{ form.csrf_token }}
+  <!-- user id -->
+  {{ form.user_id.label }} {{ form.user_id(minlength=4, maxlength=20) }}
+  <!-- user name -->
+  {{ form.user_name.label }} {{ form.user_name(minlength=4, maxlength=20) }}
+  <!-- password -->
+  {{ form.password.label }} {{ form.password(minlength=4, maxlength=20) }}
+  <!-- repassword -->
+  {{ form.repassword.label }} {{ form.repassword(minlength=4, maxlength=20) }}
+  <!-- errors -->
+  {{ form.errors }}
+  <input type="submit" value="go" />
+</form>
