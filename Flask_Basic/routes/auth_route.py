@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, redirect, url_for, flash
 
 from Flask_Basic.forms.auth_form import LoginForm, RegisterForm
 
@@ -8,8 +8,14 @@ NAME = 'auth'
 bp = Blueprint(NAME, __name__, url_prefix='/auth')
 
 
-@bp.route('/login')
+@bp.route('/')
+def index():
+    return redirect(url_for(f'{NAME}.login'))
+
+
+@bp.route('/login', methods=['GET', 'POST'])
 def login():
+    # flash('login ERROR!') # 테스트용
     form = LoginForm()
     # validate_on_submit : POST, validate OK!임을 나타내는 함수
     if form.validate_on_submit():
@@ -22,13 +28,13 @@ def login():
         password = form.data.get('password')
         return f'{user_id}, {password}'
     else:
-        # TODO: ERROR
-        pass
+        flash_form_errors(form)
     return render_template(f'{NAME}/login.html', form=form)
 
 
-@bp.route('/register')
+@bp.route('/register', methods=['GET', 'POST'])
 def register():
+    # flash('register ERROR!')  # 테스트용
     form = RegisterForm()
     if form.validate_on_submit():
         # TODO
@@ -42,11 +48,16 @@ def register():
         repassword = form.data.get('repassword')
         return f'{user_id}, {user_name}, {password}, {repassword}'
     else:
-        # TODO: ERROR
-        pass
+        flash_form_errors(form)
     return render_template(f'{NAME}/register.html', form=form)
 
 
 @bp.route('/logout')
 def logout():
     return 'logout'
+
+
+def flash_form_errors(form):
+    for _, errors in form.errors.items():
+        for e in errors:
+            flash(e)

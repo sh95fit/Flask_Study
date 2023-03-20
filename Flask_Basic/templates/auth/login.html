@@ -1,5 +1,7 @@
 <!-- {{ form }} -->
 
+{% include '_errors.html' %}
+
 <form method="POST" action="{{ url_for('auth.login') }}">
   {{ form.csrf_token }}
   <!-- user id -->
@@ -7,6 +9,6 @@
   <!-- password -->
   {{ form.password.label }} {{ form.password(minlength=4, maxlength=20) }}
   <!-- errors -->
-  {{ form.errors }}
+  <!-- {{ form.errors }} -->
   <input type="submit" value="go" />
 </form>
