@@ -13,6 +13,7 @@ def create_app():
 
     # csrf 토큰을 정상적으로 생성됨
     app.config['SECRET_KEY'] = 'secretkey'
+    app.config['SSESSION_COOKIE_NAME'] = 'huns_flask'
 
     # 정적파일 캐시 지우기
     if app.config['DEBUG']:

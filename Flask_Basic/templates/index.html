@@ -8,5 +8,5 @@
 
 <!-- Block Body -->
 {% block body -%}
-<h1>Flask Template Test</h1>
+<h1>Flask Template Test! || {{ session.get('user_id') }}</h1>
 {%- endblock %}

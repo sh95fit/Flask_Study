@@ -1,4 +1,5 @@
-from flask import Blueprint, render_template, redirect, url_for, flash
+from dataclasses import dataclass
+from flask import Blueprint, render_template, redirect, url_for, flash, session, request
 
 from Flask_Basic.forms.auth_form import LoginForm, RegisterForm
 
@@ -6,6 +7,29 @@ from Flask_Basic.forms.auth_form import LoginForm, RegisterForm
 NAME = 'auth'
 
 bp = Blueprint(NAME, __name__, url_prefix='/auth')
+
+
+'''only for testing'''
+USERS = []
+
+
+@dataclass
+class User:
+    ''' 기본 클래스 형태를 간소화한 것이 dataclass이다
+        class User:
+            def __init__(self, user_id, user_name, password) :
+                self.user_id = user_id
+                self.user_name = user_name
+                self.password = password
+    '''
+    user_id: str
+    user_name: str
+    password: str
+
+
+USERS.append(User('test_admin', 'admin', '1234'))
+USERS.append(User('test_user', 'user', '1234'))
+USERS.append(User('test_developer', 'developer', '1234'))
 
 
 @bp.route('/')
@@ -24,9 +48,24 @@ def login():
         # 2) 유저가 이미 존재하는지 체크s
         # 3) 패스워드 정합 확인
         # 4) 로그인 유지(세션)
+
+        # 메모리에 저장된 유저 정보 가져오기
+
         user_id = form.data.get('user_id')
         password = form.data.get('password')
-        return f'{user_id}, {password}'
+
+        user = [user for user in USERS if user.user_id == user_id]
+        if user:
+            user = user[0]
+            if user.password != password:
+                flash('Password is not valid.')
+            else:
+                session['user_id'] = user_id
+                return redirect(url_for('base.index'))
+
+        else:
+            flash('User ID is not exists.')
+        # return f'{user_id}, {password}'
     else:
         flash_form_errors(form)
     return render_template(f'{NAME}/login.html', form=form)
@@ -46,6 +85,22 @@ def register():
         user_name = form.data.get('user_name')
         password = form.data.get('password')
         repassword = form.data.get('repassword')
+
+        user = [user for user in USERS if user.user_id == user_id]
+        if user:
+            flash('User ID is already exists.')
+            return redirect(request.path)
+        else:
+            USERS.append(
+                User(
+                    user_id=user_id,
+                    user_name=user_name,
+                    password=password,
+                )
+            )
+            session['user_id'] = user_id
+            return redirect(url_for('base.index'))
+
         return f'{user_id}, {user_name}, {password}, {repassword}'
     else:
         flash_form_errors(form)
@@ -54,7 +109,9 @@ def register():
 
 @bp.route('/logout')
 def logout():
-    return 'logout'
+    session.pop('user_id', None)
+    # return 'logout'
+    return redirect(url_for(f'{NAME}.login'))
 
 
 def flash_form_errors(form):
