@@ -3,6 +3,8 @@ from flask import Blueprint, render_template, redirect, url_for, flash, session,
 
 from Flask_Basic.forms.auth_form import LoginForm, RegisterForm
 
+from Flask_Basic.models.user import User as UserModel
+
 from werkzeug import security
 
 NAME = 'auth'
