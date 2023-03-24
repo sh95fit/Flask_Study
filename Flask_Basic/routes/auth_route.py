@@ -1,10 +1,10 @@
 from dataclasses import dataclass
-from flask import Blueprint, render_template, redirect, url_for, flash, session, request
+from flask import Blueprint, render_template, redirect, url_for, flash, session, request, g
 
 from Flask_Basic.forms.auth_form import LoginForm, RegisterForm
 
 from Flask_Basic.models.user import User as UserModel
-from Flask_Basic import db
+# from Flask_Basic import db
 
 from werkzeug import security
 
@@ -15,8 +15,6 @@ bp = Blueprint(NAME, __name__, url_prefix='/auth')
 
 # '''only for testing'''
 # USERS = []
-
-
 # @dataclass
 # class User:
 #     ''' 기본 클래스 형태를 간소화한 것이 dataclass이다
@@ -29,13 +27,26 @@ bp = Blueprint(NAME, __name__, url_prefix='/auth')
 #     user_id: str
 #     user_name: str
 #     password: str
-
-
 # USERS.append(User('test_admin', 'admin',
 #              security.generate_password_hash('1234')))
 # USERS.append(User('test_user', 'user', security.generate_password_hash('1234')))
 # USERS.append(User('test_developer', 'developer',
 #              security.generate_password_hash('1234')))
+
+
+# before_request는 blueprint request 전에만 실행되지만 befor_app_request는 앱 전체에 대한 request 전에 실행
+@bp.before_app_request
+def before_app_request():
+    g.user = None
+    user_id = session.get('user_id')
+    if user_id:
+        user = UserModel.find_one_by_user_id(user_id)
+        if user:
+            g.user = user
+        else:
+            session.pop('user_id', None)
+
+# 라우터 설정
 
 
 @bp.route('/')
@@ -99,14 +110,14 @@ def register():
             flash('User ID is already exists.')
             return redirect(request.path)
         else:
-            db.session.add(
+            g.db.add(
                 UserModel(
                     user_id=user_id,
                     user_name=user_name,
                     password=security.generate_password_hash(password),
                 )
             )
-            db.session.commit()
+            g.db.commit()
             # db.session.close()
             session['user_id'] = user_id
             return redirect(url_for('base.index'))
