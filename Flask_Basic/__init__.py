@@ -1,8 +1,17 @@
 from flask import Flask
 from flask import render_template
 from flask_wtf.csrf import CSRFProtect
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 
 csrf = CSRFProtect()
+
+# db 세팅
+# Mysql 도커 실행
+# docker run -d --name testdb -p 3306:3306 -e MYSQL_ROOT_PASSWORD=1234 -e MYSQL_DATABASE=flask_basic  mysql:5.7 --character-set-server=utf8 --collation-server=utf8_general_ci
+db = SQLAlchemy()
+migrate = Migrate()
+
 
 # __init__.py를 통해 디렉토리 지정
 
@@ -15,10 +24,22 @@ def create_app():
     app.config['SECRET_KEY'] = 'secretkey'
     app.config['SSESSION_COOKIE_NAME'] = 'huns_flask'
 
+    # DB 연결을 위한 config 설정
+    # pymysql을 추가해주거나 mysqlclient 설치를 통해  No module named 'MySQLdb' 에러 방지
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:1234@localhost/flask_basic?charset=utf8'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
     # 정적파일 캐시 지우기
     if app.config['DEBUG']:
         # 즉, max-age를 1로 변경하여 바로바로 변경되는 것을 확인할 수 있게 해줌
         app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 1
+
+    '''DB INIT'''
+    db.init_app(app)
+    if app.config['SQLALCHEMY_DATABASE_URI'].startswith('sqlite'):
+        migrate.init_app(app, db, render_as_batch=True)
+    else:
+        migrate.init_app(app, db)
 
     '''ROUTES INIT'''
     from Flask_Basic.routes import base_route, auth_route
