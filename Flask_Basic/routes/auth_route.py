@@ -3,6 +3,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash, session,
 
 from Flask_Basic.forms.auth_form import LoginForm, RegisterForm
 
+from werkzeug import security
 
 NAME = 'auth'
 
@@ -27,9 +28,11 @@ class User:
     password: str
 
 
-USERS.append(User('test_admin', 'admin', '1234'))
-USERS.append(User('test_user', 'user', '1234'))
-USERS.append(User('test_developer', 'developer', '1234'))
+USERS.append(User('test_admin', 'admin',
+             security.generate_password_hash('1234')))
+USERS.append(User('test_user', 'user', security.generate_password_hash('1234')))
+USERS.append(User('test_developer', 'developer',
+             security.generate_password_hash('1234')))
 
 
 @bp.route('/')
@@ -57,7 +60,7 @@ def login():
         user = [user for user in USERS if user.user_id == user_id]
         if user:
             user = user[0]
-            if user.password != password:
+            if not security.check_password_hash(user.password, password):
                 flash('Password is not valid.')
             else:
                 session['user_id'] = user_id
@@ -95,7 +98,7 @@ def register():
                 User(
                     user_id=user_id,
                     user_name=user_name,
-                    password=password,
+                    password=security.generate_password_hash(password),
                 )
             )
             session['user_id'] = user_id
