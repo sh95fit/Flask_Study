@@ -4,6 +4,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash, session,
 from Flask_Basic.forms.auth_form import LoginForm, RegisterForm
 
 from Flask_Basic.models.user import User as UserModel
+from Flask_Basic import db
 
 from werkzeug import security
 
@@ -12,29 +13,29 @@ NAME = 'auth'
 bp = Blueprint(NAME, __name__, url_prefix='/auth')
 
 
-'''only for testing'''
-USERS = []
+# '''only for testing'''
+# USERS = []
 
 
-@dataclass
-class User:
-    ''' 기본 클래스 형태를 간소화한 것이 dataclass이다
-        class User:
-            def __init__(self, user_id, user_name, password) :
-                self.user_id = user_id
-                self.user_name = user_name
-                self.password = password
-    '''
-    user_id: str
-    user_name: str
-    password: str
+# @dataclass
+# class User:
+#     ''' 기본 클래스 형태를 간소화한 것이 dataclass이다
+#         class User:
+#             def __init__(self, user_id, user_name, password) :
+#                 self.user_id = user_id
+#                 self.user_name = user_name
+#                 self.password = password
+#     '''
+#     user_id: str
+#     user_name: str
+#     password: str
 
 
-USERS.append(User('test_admin', 'admin',
-             security.generate_password_hash('1234')))
-USERS.append(User('test_user', 'user', security.generate_password_hash('1234')))
-USERS.append(User('test_developer', 'developer',
-             security.generate_password_hash('1234')))
+# USERS.append(User('test_admin', 'admin',
+#              security.generate_password_hash('1234')))
+# USERS.append(User('test_user', 'user', security.generate_password_hash('1234')))
+# USERS.append(User('test_developer', 'developer',
+#              security.generate_password_hash('1234')))
 
 
 @bp.route('/')
@@ -59,13 +60,14 @@ def login():
         user_id = form.data.get('user_id')
         password = form.data.get('password')
 
-        user = [user for user in USERS if user.user_id == user_id]
+        # user = [user for user in USERS if user.user_id == user_id]
+        user = UserModel.find_one_by_user_id(user_id)
         if user:
-            user = user[0]
+            # user = user[0]
             if not security.check_password_hash(user.password, password):
                 flash('Password is not valid.')
             else:
-                session['user_id'] = user_id
+                session['user_id'] = user.user_id
                 return redirect(url_for('base.index'))
 
         else:
@@ -91,18 +93,21 @@ def register():
         password = form.data.get('password')
         repassword = form.data.get('repassword')
 
-        user = [user for user in USERS if user.user_id == user_id]
+        # user = [user for user in USERS if user.user_id == user_id]
+        user = UserModel.find_one_by_user_id(user_id)
         if user:
             flash('User ID is already exists.')
             return redirect(request.path)
         else:
-            USERS.append(
-                User(
+            db.session.add(
+                UserModel(
                     user_id=user_id,
                     user_name=user_name,
                     password=security.generate_password_hash(password),
                 )
             )
+            db.session.commit()
+            # db.session.close()
             session['user_id'] = user_id
             return redirect(url_for('base.index'))
 
