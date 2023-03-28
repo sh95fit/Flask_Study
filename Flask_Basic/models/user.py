@@ -1,5 +1,10 @@
 from Flask_Basic import db
 
+# 도커 실행 관련
+'''
+docker run -d --name testdb -p 3306:3306 -e MYSQL_DATABASE=flask_test -e MYSQL_ROOT_PASSWORD=1234 mysql:5.7 --character-set-server=utf8 --collation-server=utf8_general_ci
+'''
+
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
