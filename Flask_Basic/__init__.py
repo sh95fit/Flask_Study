@@ -16,27 +16,39 @@ migrate = Migrate()
 # __init__.py를 통해 디렉토리 지정
 
 
-def create_app():
+def create_app(config=None):
     print('run create_app()')
     app = Flask(__name__)
 
-    # csrf 토큰을 정상적으로 생성됨
-    app.config['SECRET_KEY'] = 'secretkey'
-    app.config['SSESSION_COOKIE_NAME'] = 'huns_flask'
+    '''FLASK CONFIGS'''
+    from .configs import DevelopmentConfig, ProductionConfig
 
-    # DB 연결을 위한 config 설정
-    # pymysql을 추가해주거나 mysqlclient 설치를 통해  No module named 'MySQLdb' 에러 방지
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:1234@localhost/flask_basic?charset=utf8'
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    if not config:
+        if app.config['DEBUG']:
+            config = DevelopmentConfig()
+        else:
+            config = ProductionConfig()
 
-    app.config['SWAGGER_UI_DOC_EXPANSION'] = 'list'
+    print('run with : ', config)
+    app.config.from_object(config)
 
-    # 정적파일 캐시 지우기
-    if app.config['DEBUG']:
-        # 즉, max-age를 1로 변경하여 바로바로 변경되는 것을 확인할 수 있게 해줌
-        app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 1
-        # 디버그 모드에서는 CSRF 에러를 띄우지 않음!
-        app.config['WTF_CSRF_ENABLED'] = False
+    # # csrf 토큰을 정상적으로 생성됨
+    # app.config['SECRET_KEY'] = 'secretkey'
+    # app.config['SSESSION_COOKIE_NAME'] = 'huns_flask'
+
+    # # DB 연결을 위한 config 설정
+    # # pymysql을 추가해주거나 mysqlclient 설치를 통해  No module named 'MySQLdb' 에러 방지
+    # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:1234@localhost/flask_basic?charset=utf8'
+    # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+    # app.config['SWAGGER_UI_DOC_EXPANSION'] = 'list'
+
+    # # 정적파일 캐시 지우기
+    # if app.config['DEBUG']:
+    #     # 즉, max-age를 1로 변경하여 바로바로 변경되는 것을 확인할 수 있게 해줌
+    #     app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 1
+    #     # 디버그 모드에서는 CSRF 에러를 띄우지 않음!
+    #     app.config['WTF_CSRF_ENABLED'] = False
 
     ''' CSRF INIT '''
     csrf.init_app(app)
