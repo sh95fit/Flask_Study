@@ -1,10 +1,13 @@
 {% extends "/layout.html" %}
 <!-- title -->
 {% block title -%} Register {%- endblock %}
+
+<!-- 매크로 추가 -->
+{% from "_mdlforms.html" import render_text_field %}
+
 <!-- body -->
 {% block body -%}
 <div class="mdl-grid">
-  {% include "_errors.html" %}
   <div class="mdl-cell mdl-cell--4-col"></div>
   <div class="mdl-cell mdl-cell--4-col">
     <form method="POST" action="{{ url_for('auth.register') }}">
@@ -21,25 +24,37 @@
             <span class="material-icons"> article </span>
           </div>
           <span id="logoTitle" class="mdl-card__title-text">
-            <a href="/">Kaap</a>: Sign Up
+            <a href="/">Hun's Flask</a>: Sign Up
           </span>
         </div>
         <div class="mdl-card__supporting-text">
           <!--TODO: Macro 만들기-->
+          {{ render_text_field(form.user_id, minlength=4, maxlength=20,
+          autocomplete='off') | indent(24) }} {{
+          render_text_field(form.user_name, minlength=4, maxlength=20,
+          autocomplete='off') | indent(24) }} {{
+          render_text_field(form.password, minlength=4, maxlength=20,
+          autocomplete='off') | indent(24) }} {{
+          render_text_field(form.repassword, minlength=4, maxlength=20,
+          autocomplete='off') | indent(24) }}
+
           <!-- user id -->
-          {{ form.user_id.label }} {{ form.user_id(minlength=4, maxlength=20) }}
+          <!-- {{ form.user_id.label }} {{ form.user_id(minlength=4, maxlength=20) }} -->
           <!-- user name -->
-          {{ form.user_name.label }} {{ form.user_name(minlength=4,
-          maxlength=20) }}
+          <!-- {{ form.user_name.label }} {{ form.user_name(minlength=4,
+          maxlength=20) }} -->
           <!-- password -->
-          {{ form.password.label }} {{ form.password(minlength=4, maxlength=20)
-          }}
+          <!-- {{ form.password.label }} {{ form.password(minlength=4, maxlength=20)
+          }} -->
           <!-- repassword -->
-          {{ form.repassword.label }} {{ form.repassword(minlength=4,
-          maxlength=20) }}
+          <!-- {{ form.repassword.label }} {{ form.repassword(minlength=4,
+          maxlength=20) }} -->
           <!-- errors -->
           <!-- {{ form.errors }} -->
         </div>
+
+        {% filter indent(width=10) -%} {% include "_errors.html" %} {%-
+        endfilter %}
 
         <div class="mdl-card__actions mdl-card--border">
           <div class="mdl-grid">
