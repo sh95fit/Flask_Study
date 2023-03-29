@@ -34,6 +34,9 @@ def create_app():
         # 즉, max-age를 1로 변경하여 바로바로 변경되는 것을 확인할 수 있게 해줌
         app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 1
 
+    ''' CSRF INIT '''
+    csrf.init_app(app)
+
     '''DB INIT'''
     db.init_app(app)
     if app.config['SQLALCHEMY_DATABASE_URI'].startswith('sqlite'):
@@ -46,8 +49,9 @@ def create_app():
     app.register_blueprint(base_route.bp)
     app.register_blueprint(auth_route.bp)
 
-    ''' CSRF INIT '''
-    csrf.init_app(app)
+    '''RESTX INIT'''
+    from Flask_Basic.apis import blueprint as api
+    app.register_blueprint(api)
 
     ''' REQUEST HOOK'''
     @app.before_request
