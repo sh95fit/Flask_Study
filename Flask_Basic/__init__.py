@@ -35,6 +35,8 @@ def create_app():
     if app.config['DEBUG']:
         # 즉, max-age를 1로 변경하여 바로바로 변경되는 것을 확인할 수 있게 해줌
         app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 1
+        # 디버그 모드에서는 CSRF 에러를 띄우지 않음!
+        app.config['WTF_CSRF_ENABLED'] = False
 
     ''' CSRF INIT '''
     csrf.init_app(app)
