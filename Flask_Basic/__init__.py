@@ -29,6 +29,8 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:1234@localhost/flask_basic?charset=utf8'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+    app.config['SWAGGER_UI_DOC_EXPANSION'] = 'list'
+
     # 정적파일 캐시 지우기
     if app.config['DEBUG']:
         # 즉, max-age를 1로 변경하여 바로바로 변경되는 것을 확인할 수 있게 해줌
