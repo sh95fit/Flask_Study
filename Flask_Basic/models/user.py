@@ -1,4 +1,5 @@
 from Flask_Basic import db
+from sqlalchemy import func
 
 # 도커 실행 관련
 '''
@@ -11,6 +12,8 @@ class User(db.Model):
     user_id = db.Column(db.String(20), unique=True, nullable=False)
     user_name = db.Column(db.String(20), nullable=False)
     password = db.Column(db.String(200), nullable=False)
+    # server_default : column 추가 시 기존에 값이 없는 테이블들에 값을 채워줌 <-> default : 값이 없는 테이블들의 값을 채워주지 않음
+    created_at = db.Column(db.DateTime(), server_default=func.now())
 
     @classmethod
     def find_one_by_user_id(cls, user_id):
