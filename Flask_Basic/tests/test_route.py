@@ -1,16 +1,16 @@
-import pytest
-from Flask_Basic import create_app
-from Flask_Basic.configs import TestingConfig
-import sys
-sys.path.append('.')
+# import pytest
+# from Flask_Basic import create_app
+# from Flask_Basic.configs import TestingConfig
+# import sys
+# sys.path.append('.')
 
 
-@pytest.fixture
-def client():
-    app = create_app(TestingConfig())
+# @pytest.fixture
+# def client():
+#     app = create_app(TestingConfig())
 
-    with app.test_client() as client:
-        yield client
+#     with app.test_client() as client:
+#         yield client
 
 
 def test_auth(client):
