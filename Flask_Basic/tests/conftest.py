@@ -2,6 +2,7 @@ import pytest
 from Flask_Basic import create_app, db
 from Flask_Basic.configs import TestingConfig
 from Flask_Basic.models.user import User as UserModel
+from Flask_Basic.models.memo import Memo as MemoModel
 import sys
 import os
 import shutil
@@ -22,14 +23,27 @@ def user_data():
         password='tester'
     )
 
+@pytest.fixture(scope='session')
+def memo_data() :
+    yield dict(
+        title='title',
+        content='content'
+    )
+
 
 @pytest.fixture(scope='session')
-def app(user_data):
+def app(user_data, memo_data):
     app = create_app(TestingConfig())
     with app.app_context():
         db.drop_all()   # db 초기화
         db.create_all()  # db 생성
-        db.session.add(UserModel(**user_data))  # db에 값 입력
+        user = UserModel(**user_data)
+        db.session.add(user)  # db에 값 입력
+
+        db.session.flush()  # user.id 값이 유효하도록 만들기 위함
+        memo_data['user_id'] = user.id
+        db.session.add(MemoModel(**memo_data))
+
         db.session.commit()  # db 저장
         # db.session.close()
         yield app
