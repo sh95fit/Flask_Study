@@ -1,7 +1,7 @@
 def test_get_memo(client, memo_data):
     r = client.get(
         '/api/memos/1',
-        follow_redirect=True
+        follow_redirects=True
     )
     assert r.status_code == 200
     assert r.json['title'] == memo_data['title']
