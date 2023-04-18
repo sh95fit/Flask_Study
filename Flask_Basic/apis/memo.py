@@ -1,6 +1,6 @@
 from Flask_Basic.models.memo import Memo as MemoModel
 from Flask_Basic.models.user import User as UserModel
-from flask_restx import Namespace, fields, Resource
+from flask_restx import Namespace, fields, Resource, reqparse
 from flask import g
 
 
@@ -18,6 +18,12 @@ memo = ns.model('Memo', {
   'updated_at' : fields.DateTime(required=True, description='메모 변경일')
 })
 
+
+parser = reqparse.RequestParser()
+parser.add_argument('title', required=True, help='메모 제목')
+parser.add_argument('content', required=True, help='메모 내용')
+
+
 @ns.route('')
 class MemoList(Resource) :
 
@@ -33,6 +39,21 @@ class MemoList(Resource) :
       MemoModel.created_at.desc()
     ).limit(10).all()
     return data
+
+
+  @ns.marshal_list_with(memo, skip_none=True)
+  @ns.expect(parser)
+  def post(self) :
+    '''메모 생성'''
+    args = parser.parse_args()
+    memo = MemoModel(
+      title = args['title'],
+      content = args['content'],
+      user_id = g.user.id
+    )
+    g.db.add(memo)
+    g.db.commit()
+    return memo, 201
 
 
   @ns.param('id', '메모 고유 아이디')
