@@ -22,7 +22,8 @@ class DevelopmentConfig(Config):
 class TestingConfig(DevelopmentConfig):
     __test__ = False
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = f'sqlite:///{os.path.join(BASE_PATH, "sqlite_test.db")}'
+    SQLALCHEMY_DATABASE_URI = f'sqlite:///{os.path.join(BASE_PATH, "dummy_db/sqlite_test.db")}'
+    PYTEST_URI = f'sqlite:///{BASE_PATH + "/dummy_db"}'
 
 
 class ProductionConfig(DevelopmentConfig):
