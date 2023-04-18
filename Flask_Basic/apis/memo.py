@@ -43,6 +43,7 @@ class MemoList(Resource) :
     ).order_by(
       MemoModel.created_at.desc()
     ).limit(10).all()
+    # return '', 404
     return data
 
 
