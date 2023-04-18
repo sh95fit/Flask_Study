@@ -14,8 +14,8 @@ memo = ns.model('Memo', {
   'user_id' : fields.Integer(required=True, description='유저 고유 아이디'),
   'title' : fields.String(requried=True, description='메모 제목'),
   'content' : fields.String(required=True, description='메모 내용'),
-  'create_at' : fields.DateTime(required=True, description='메모 작성일'),
-  'updated_at' : fields.DateTime(required=True, description='메모 변경일')
+  'created_at' : fields.DateTime(required=True, description='메모 작성일'),
+  'upgraded_at' : fields.DateTime(required=True, description='메모 변경일')
 })
 
 
