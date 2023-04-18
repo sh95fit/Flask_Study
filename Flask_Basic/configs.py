@@ -26,5 +26,5 @@ class TestingConfig(DevelopmentConfig):
     PYTEST_URI = f'sqlite:///{BASE_PATH + "/dummy_db"}'
 
 
-class ProductionConfig(DevelopmentConfig):
+class ProductionConfig(Config):
     pass

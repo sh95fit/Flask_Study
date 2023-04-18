@@ -1,4 +1,5 @@
 from flask import Flask, g
+# from flask import request
 from flask import render_template
 from flask_wtf.csrf import CSRFProtect
 from flask_sqlalchemy import SQLAlchemy
@@ -68,6 +69,9 @@ def create_app(config=None):
     '''RESTX INIT'''
     from Flask_Basic.apis import blueprint as api
     app.register_blueprint(api)
+    # Production 모드에서 api docs에 접근이 필요한 경우 추가
+    # 조건을 주지 않으면 전역으로 처리되어 아무나 접근이 가능
+    # csrf.exempt(api)
 
     ''' REQUEST HOOK'''
     @app.before_request
