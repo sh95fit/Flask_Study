@@ -48,6 +48,15 @@ def app(user_data, memo_data):
         # db.session.close()
         yield app
         # 불필요 디비 정리 및 삭제
+
+        # /static/user_images/tester(=user_id)
+        path = os.path.join(
+            app.static_folder,
+            app.config['USER_STATIC_BASE_DIR'],
+            user_data['user_id']
+        )
+        shutil.rmtree(path, True)
+
         db.drop_all()
         # db_path = app.config['SQLALCHEMY_DATABASE_URI'].replace(
         #     'sqlite:///',

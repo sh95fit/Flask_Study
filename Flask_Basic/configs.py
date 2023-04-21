@@ -9,6 +9,7 @@ class Config:
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:1234@localhost/flask_basic?charset=utf8'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SWAGGER_UI_DOC_EXPANSION = 'list'
+    USER_STATIC_BASE_DIR = 'user_images'
 
 
 class DevelopmentConfig(Config):
