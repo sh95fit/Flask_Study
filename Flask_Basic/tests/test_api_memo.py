@@ -61,44 +61,40 @@ def test_delete_memo(client):
     assert len(r.json) == 1
 
 
-def test_post_memo_with_img(client, memo_data) :
+def test_post_memo_with_img(client, memo_data):
     data = memo_data.copy()
     data['linked_image'] = (
         BytesIO(b'dummy'),
-        'test.jpg'
+        '1234567890qweasdzxc.jpg'
     )
     r = client.post(
         '/api/memos',
         data=data
     )
-
     assert r.status_code == 201
     assert r.json.get('linked_image') is not None
 
-
-def test_put_memo_with_img(client, memo_data) :
+def test_put_memo_with_img(client, memo_data):
     r = client.post(
-    '/api/memos',
-    data=memo_data
+        '/api/memos',
+        data=memo_data
     )
     assert r.status_code == 201
     memo_id = r.json['id']
-
     data = {
-        'linked_image' : (
+        'linked_image': (
             BytesIO(b'dummy'),
             'test.jpg'
         )
     }
     r = client.put(
         f'/api/memos/{memo_id}',
-        data = data
+        data=data
     )
     assert r.status_code == 200
     assert r.json.get('linked_image') is not None
 
-
-def test_delete_memo_with_img(client, memo_data) :
+def test_delete_memos_img(client, memo_data):
     data = memo_data.copy()
     data['linked_image'] = (
         BytesIO(b'dummy'),
@@ -113,10 +109,9 @@ def test_delete_memo_with_img(client, memo_data) :
     memo_id = r.json['id']
 
     r = client.delete(
-        f'/api/memos/{memo_id}'
+        f'/api/memos/{memo_id}/image',
     )
     assert r.status_code == 204
-
     r = client.get(
         f'/api/memos/{memo_id}',
         follow_redirects=True

@@ -53,7 +53,7 @@ def app(user_data, memo_data):
         path = os.path.join(
             app.static_folder,
             app.config['USER_STATIC_BASE_DIR'],
-            user_data['user_id']
+            'tester'
         )
         shutil.rmtree(path, True)
 
