@@ -288,4 +288,8 @@ $RECYCLE.BIN/
 # sqlite
 *.db
 
+# user_images
+Flask_Basic/static/user_images
+user_images
+
 # End of https://www.toptal.com/developers/gitignore/api/python,flask,windows
