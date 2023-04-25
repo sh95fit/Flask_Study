@@ -1,6 +1,6 @@
 from Flask_Basic.models.memo import Memo as MemoModel
 from Flask_Basic.models.user import User as UserModel
-from flask_restx import Namespace, fields, Resource, reqparse
+from flask_restx import Namespace, fields, Resource, reqparse, inputs
 from flask import g, current_app
 from werkzeug.datastructures import FileStorage
 from werkzeug.utils import secure_filename
@@ -18,6 +18,7 @@ memo = ns.model('Memo', {
   'title' : fields.String(required=True, description='메모 제목'),
   'content' : fields.String(required=True, description='메모 내용'),
   'linked_image' : fields.String(required=False, description='메모 이미지'),
+  'is_deleted' : fields.Boolean(description='메모 삭제 상태(플래그)'),
   'created_at' : fields.DateTime(required=True, description='메모 작성일'),
   'upgraded_at' : fields.DateTime(required=True, description='메모 변경일')
 })
@@ -29,6 +30,9 @@ parser.add_argument('content', required=True, help='메모 내용')
 
 
 parser.add_argument('linked_image', location='files', required=False, type=FileStorage, help='메모 이미지')
+
+
+parser.add_argument('is_deleted', required=False, type=inputs.boolean, help='메모 삭제 상태(플래그)')
 
 
 put_parser = parser.copy()
@@ -44,6 +48,9 @@ get_parser.add_argument('page', required=False, type=int, help="메모 페이지
 
 
 get_parser.add_argument('needle', required=False, help='메모 검색어')
+
+
+get_parser.add_argument('is_deleted', required=False, type=inputs.boolean, help='메모 삭제 상태(플래그)')
 
 
 def allowed_file(filename) :
@@ -109,12 +116,17 @@ class MemoList(Resource) :
     page = args['page']
     needle = args['needle']
     per_page = 15
+    is_deleted = args['is_deleted']
+
+    if is_deleted is None :
+      is_deleted = False
 
     base_query = MemoModel.query.join(
       UserModel,
       UserModel.id == MemoModel.user_id
     ).filter(
-      UserModel.id == g.user.id
+      UserModel.id == g.user.id,
+      MemoModel.is_deleted == is_deleted
     )
 
     if needle :
@@ -151,6 +163,9 @@ class MemoList(Resource) :
       user_id = g.user.id
     )
 
+    if args['is_deleted'] is not None :
+      memo.is_deleted = args['is_deleted']
+
     file = args['linked_image']
     if file :
       relative_path, _ = save_file(file)
@@ -186,6 +201,9 @@ class MemoList(Resource) :
         memo.title = args['title']
       if args['content'] is not None :
         memo.content = args['content']
+
+      if args['is_deleted'] is not None :
+        memo.is_deleted = args['is_deleted']
 
       file = args['linked_image']
       if file :
@@ -237,3 +255,5 @@ class MemoImage(Resource) :
       g.db.commit()
 
     return '', 204
+
+
