@@ -24,6 +24,18 @@ parser.add_argument('content', required=True, type=str, help='라밸 내용')
 class LabelList(Resource) :
 
   @ns.marshal_list_with(label, skip_none=True)
+  def get(self) :
+    '''라벨 복수 조회'''
+    query = LabelModel.query.join(
+      UserModel,
+      UserModel.id == LabelModel.user_id
+    ).filter(
+      UserModel.id == g.user.id
+    )
+    return query.all()
+
+
+  @ns.marshal_list_with(label, skip_none=True)
   @ns.expect(parser)
   def post(self):
     '''라벨 생성'''
@@ -49,3 +61,5 @@ class LabelList(Resource) :
     g.db.commit()
 
     return label, 201
+
+
