@@ -42,7 +42,7 @@ parser.add_argument('linked_image', location='files', required=False, type=FileS
 parser.add_argument('is_deleted', required=False, type=inputs.boolean, help='메모 삭제 상태(플래그)')
 
 
-parser.add_argument('labels', action='split', help='라벨 번호 콤마 스트링')
+parser.add_argument('labels', action='split', help='라벨 내용 콤마 스트링')
 
 
 put_parser = parser.copy()
