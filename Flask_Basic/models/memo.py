@@ -1,6 +1,14 @@
 from Flask_Basic import db
 from sqlalchemy import func
 
+memos_labels = db.Table(
+    'memos_labels',
+    db.Column('memo_id', db.Integer, db.ForeignKey(
+        'memo.id'), primary_key=True),
+    db.Column('label_id', db.Integer, db.ForeignKey(
+        'label.id'), primary_key=True)
+)
+
 
 class Memo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -19,3 +27,10 @@ class Memo(db.Model):
         ),
         nullable=False
     )
+
+    labels = db.relationship(
+        'label', # 라벨과의 연관성을 가질 것
+        secondary=memos_labels, # 다대다 관계 테이블을 참조할 것
+        backref=db.backref('memos') # Label 객체에서도 memos 객체에 접근이 가능할 것
+    )
+
