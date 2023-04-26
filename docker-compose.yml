@@ -1,5 +1,19 @@
 version: '3.7'
 services:
+  ft-nginx:
+    container_name : ft-nginx
+    image: nginx
+    restart: always
+    volumes:
+      - ./etc/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ftsocket:/tmp
+    networks:
+      - ftnet
+    depends_on:
+      - ft-web
+    ports:
+      - 9001:9001
+
   ft-web:
     container_name: ft-web
     image: ft-web
@@ -12,6 +26,7 @@ services:
       - ft-db
     volumes:
       - ./:/var/www/Flask_Basic
+      - ftsocket:/tmp
     restart: always
     environment:
       - FLASK_APP=Flask_Basic
@@ -41,3 +56,4 @@ networks:
 
 volumes:
   ftvolume:
+  ftsocket:
