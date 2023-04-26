@@ -24,8 +24,11 @@ WORKDIR /var/www/Flask_Basic
 # 설치한 패키지 명령어를 사용하기 위해 환경변수 등록
 ENV PATH="/home/python/.local/bin:${PATH}"
 
+# etc/docker-entrypoint.sh 실행을 위한 권한 변경
+RUN chmod +x ./etc/docker-entrypoint.sh
+
 # 9000 포트 노출
 EXPOSE 9000
 
-# gunicorn 실행
-CMD gunicorn --bind :9000 --workers 2 --threads 8 'Flask_Basic:create_app()'
+# gunicorn 실행 (etc/docker-entrypoint.sh로 명령어를 한번에 실행)
+# CMD gunicorn --bind :9000 --workers 2 --threads 8 'Flask_Basic:create_app()'

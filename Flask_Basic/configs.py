@@ -11,6 +11,19 @@ class Config:
     SWAGGER_UI_DOC_EXPANSION = 'list'
     USER_STATIC_BASE_DIR = 'user_images'
 
+    def __init__(self) :
+        db_env = os.environ.get('SQLALCHEMY_DATABASE_URI')
+        if db_env :
+            self.SQLALCHEMY_DATABASE_URI = db_env
+
+    # 다른 방법
+    # @property
+    # def SSQLALCHEMY_DATABASE_URI(self) :
+    #     db_env = os.environ.get('SQLALCHEMY_DATABASE_URI')
+    #     if db_env :
+    #         return db_env
+    #     return self.SQLALCHEMY_DATABASE_URI
+
 
 class DevelopmentConfig(Config):
     '''Flask Config for dev'''
