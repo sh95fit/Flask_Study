@@ -14,6 +14,7 @@ COPY ./requirements.txt /tmp/requirements.txt
 RUN python -m pip install --upgrade pip
 RUN pip install --user -r /tmp/requirements.txt
 RUN pip install --user gunicorn==20.1.0
+RUN pip install --user python-dotenv
 
 # 프로젝트 소스 복사
 COPY --chown=python:python ./ /var/www/Flask_Basic
